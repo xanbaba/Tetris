@@ -10,7 +10,7 @@ struct Array
 };
 
 template <typename T>
-Array<T> create_array(int capacity)
+Array<T> create_array(int capacity = 16)
 {
     Array<T> array;
 
@@ -213,6 +213,16 @@ void reverse(Array<T>& array)
     for (int i = 0; i < middle_index; ++i)
     {
         swap_values(data[i], data[last_index - i]);
+    }
+}
+
+template <typename T>
+void set_data_array(Array<T>& array, T* new_data, int new_data_size)
+{
+    clear_array(array);
+    for (int i = 0; i < new_data_size; ++i)
+    {
+        append(array, new_data[i]);
     }
 }
 

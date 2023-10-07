@@ -10,13 +10,13 @@ struct Array2D
 };
 
 template <typename T>
-Array2D<T> create_array_2d()
+Array2D<T> create_array_2d(int capacity = 16)
 {
     Array2D<T> array;
 
     array.rows = 0;
-    array.capacity = 16;
-    array.data = new Array<T>[array.capacity]{};
+    array.capacity = capacity;
+    array.data = new Array<T>[capacity]{};
 
     return array;
 }
