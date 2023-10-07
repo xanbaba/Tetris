@@ -154,11 +154,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Console\Console.cpp" />
+    <ClCompile Include="Figures\Figures.cpp" />
     <ClCompile Include="GameArea\Area.cpp" />
+    <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Tetris.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Array\Array.h" />
+    <ClInclude Include="Array\Array2D.h" />
+    <ClInclude Include="Console\Console.h" />
+    <ClInclude Include="Figures\Figures.h" />
     <ClInclude Include="GameArea\Area.h" />
+    <ClInclude Include="Game\Game.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
