@@ -154,7 +154,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameArea\Area.cpp" />
     <ClCompile Include="Tetris.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameArea\Area.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
