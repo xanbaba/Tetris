@@ -219,11 +219,9 @@ void reverse(Array<T>& array)
 template <typename T>
 void set_data_array(Array<T>& array, T* new_data, int new_data_size)
 {
-    clear_array(array);
-    for (int i = 0; i < new_data_size; ++i)
-    {
-        append(array, new_data[i]);
-    }
+    delete[] array.data;
+    array.size = new_data_size;
+    array.data = new_data;
 }
 
 template <typename T>

@@ -1,115 +1,133 @@
 ﻿#include "Figures.h"
 
-figure* generate_figures()
+void create_figure(Array<figure>& figures_list, int& figures_list_index, char**& figure_rows_chars, int rows, int cols)
+{
+    auto figure_array = create_array_2d<char>();
+
+    for (int i = 0; i < rows; ++i)
+    {
+        auto row = create_array<char>(cols);
+        set_data_array(row, figure_rows_chars[i], cols);
+        append_row(figure_array, row);
+        // delete[] figure_rows_chars[i];
+    }
+
+    delete[] figure_rows_chars;
+
+    figure add_figure{};
+    add_figure.figure_array = figure_array;
+    add_figure.width = cols;
+    add_figure.height = rows;
+    
+    append(figures_list, add_figure);
+    ++figures_list_index;
+}
+
+Array<figure> generate_figures()
 {
     constexpr int figures_count = 7;
 
-    figure* figures_list = new figure[figures_count]{};
+    Array<figure> figures_list = create_array<figure>(figures_count);
+
+    int figures_iteration{};
 
     // J figure
     {
-        auto J_figure = create_array_2d<char>();
-        auto J_figure_rows = create_array<Array<char>>(3);
-
-        char J_figure_rows_chars[3][3]
+        char** J_figure_rows_chars = new char*[3]
         {
-            {'\0', '\0', '*'},
-            {'\0', '\0', '*'},
-            {'*', '*', '*'}
+            new char[3]{'\0', '\0', '*'},
+            new char[3]{'\0', '\0', '*'},
+            new char[3]{'*', '*', '*'}
         };
 
-        for (int i = 0; i < 3; ++i)
-        {
-            auto row = create_array<char>(3);
-            set_data_array(row, J_figure_rows_chars[i], 3);
-            append(J_figure_rows, row);
-            append_row(J_figure, J_figure_rows.data[i]);
-        }
+        create_figure(figures_list, figures_iteration, J_figure_rows_chars, 3, 3);
     }
 
     // L figure
     {
-        auto L_figure = create_array_2d<char>();
-        auto L_figure_rows = create_array<Array<char>>(3);
-
-        char L_figure_rows_chars[3][3]
+        char** L_figure_rows_chars = new char*[3]
         {
-            {'*'},
-            {'*'},
-            {'*', '*', '*'}
+            new char[3]{'*'},
+            new char[3]{'*'},
+            new char[3]{'*', '*', '*'}
         };
 
-        for (int i = 0; i < 3; ++i)
-        {
-            auto row = create_array<char>(3);
-            set_data_array(row, L_figure_rows_chars[i], 3);
-            append(L_figure_rows, row);
-            append_row(L_figure, L_figure_rows.data[i]);
-        }
+        create_figure(figures_list, figures_iteration, L_figure_rows_chars, 3, 3);
+        
     }
 
     // I figure
     {
-        auto I_figure = create_array_2d<char>();
-        auto I_figure_rows = create_array<Array<char>>(4);
-
-        char I_figure_rows_chars[4][1]
+        char** I_figure_rows_chars = new char*[4]
         {
-            {'*'},
-            {'*'},
-            {'*'},
-            {'*'}
+            new char[1]{'*'},
+            new char[1]{'*'},
+            new char[1]{'*'},
+            new char[1]{'*'}
         };
 
-        for (int i = 0; i < 4; ++i)
-        {
-            auto row = create_array<char>(1);
-            set_data_array(row, I_figure_rows_chars[i], 1);
-            append(I_figure_rows, row);
-            append_row(I_figure, I_figure_rows.data[i]);
-        }
+        create_figure(figures_list, figures_iteration, I_figure_rows_chars, 4, 1);
     }
 
     // O figure
     {
-        auto O_figure = create_array_2d<char>();
-        auto O_figure_rows = create_array<Array<char>>(2);
-
-        char O_figure_rows_chars[2][2]
+        char** O_figure_rows_chars = new char*[2]
         {
-            {'*', '*'},
-            {'*', '*'}
+            new char[2]{'*', '*'},
+            new char[2]{'*', '*'}
         };
 
-        for (int i = 0; i < 2; ++i)
-        {
-            auto row = create_array<char>(2);
-            set_data_array(row, O_figure_rows_chars[i], 2);
-            append(O_figure_rows, row);
-            append_row(O_figure, O_figure_rows.data[i]);
-        }
+        create_figure(figures_list, figures_iteration, O_figure_rows_chars, 2, 2);
     }
 
     // S figure
     {
-        auto S_figure = create_array_2d<char>();
-        auto S_figure_rows = create_array<Array<char>>(3);
-
-        char S_figure_rows_chars[3][2]
+        char** S_figure_rows_chars = new char*[3]
         {
-            {'*'},
-            {'*', '*'},
-            {'\0', '*'}
+            new char[2]{'*'},
+            new char[2]{'*', '*'},
+            new char[2]{'\0', '*'}
         };
 
-        for (int i = 0; i < 2; ++i)
+        create_figure(figures_list, figures_iteration, S_figure_rows_chars, 3, 2);
+    }
+    // T figure
+    {
+        char** T_figure_rows_chars = new char*[3]
         {
-            auto row = create_array<char>(2);
-            set_data_array(row, S_figure_rows_chars[i], 2);
-            append(S_figure_rows, row);
-            append_row(S_figure, S_figure_rows.data[i]);
-        }
+            new char[2]{'*'},
+            new char[2]{'*', '*'},
+            new char[2]{'*'}
+        };
+
+        create_figure(figures_list, figures_iteration, T_figure_rows_chars, 3, 2);
+    }
+
+    // S figure
+    {
+        char** Z_figure_rows_chars = new char*[3]
+        {
+            new char[2]{'\0', '*'},
+            new char[2]{'*', '*'},
+            new char[2]{'*'}
+        };
+
+        create_figure(figures_list, figures_iteration, Z_figure_rows_chars, 3, 2);
     }
 
     return figures_list;
+}
+
+void destroy_figures(Array<figure>& figures_list)
+{
+    for (int i = 0; i < figures_list.capacity; ++i)
+    {
+        // figures_list.data->figure_array.data->data
+        delete_array_2d(figures_list.data[i].figure_array);
+        
+    }
+    delete_array(figures_list);
+    // std::cout << figures_list.data[0].figure_array.data[0].data[0];
+    // print_array(figures_list.data[0].figure_array.data[0]);
+    // print_array_2d(figures_list.data[0].figure_array);
 }
