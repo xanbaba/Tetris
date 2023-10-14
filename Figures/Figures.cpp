@@ -1,6 +1,7 @@
 ﻿#include "Figures.h"
 #include "../Game/Game.h"
 
+
 void create_figure(Array<figure>& figures_list, int& figures_list_index, char**& figure_rows_chars, int rows, int cols)
 {
     auto figure_array = create_array_2d<char>();
@@ -184,4 +185,14 @@ bool check_figure_stop(area game_area, figure figure_object)
         }
     }
     return false;
+}
+
+void move_figure(area game_area, figure& figure_object, direction dir)
+{
+    auto result_x = figure_object.x + static_cast<int>(dir);
+    if (result_x < 0 || result_x >= game_area.width)
+    {
+        return;
+    }
+    figure_object.x = result_x;
 }

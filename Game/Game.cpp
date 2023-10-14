@@ -1,8 +1,9 @@
 ﻿#include "Game.h"
 #include "../Array/Array2D.h"
-#include "../Console/Console.h"
+#include "../Console_App/Console_app.h"
 #include <Windows.h>
 #include <random>
+#include <conio.h>
 
 void start_game(area_size game_area_width, area_size game_area_height)
 {
@@ -19,18 +20,41 @@ void start_game(area_size game_area_width, area_size game_area_height)
 
         print_introduction();
 
+        print_area(game_area);
+
         // main loop
         while (true)
         {
             auto figure_object = figures_list.data[range(engine)];
             auto current_figure = copy_figure(figure_object);
+            unsigned long long iteration{};
             while (true)
             {
-                std::cout << current_figure.y + current_figure.height << ' ' << area_height;
-                draw_figure_in_area(game_area, current_figure);
-                print_area(game_area);
-                Sleep(200);
-                system("cls");
+                if (_kbhit())
+                {
+                    int key = _getch();
+                    if (key == 75)
+                    {
+                        delete_figure_from_area(game_area, current_figure);
+                        move_figure(game_area, current_figure, direction::left);
+                        draw_figure_in_area(game_area, current_figure);
+                        
+                    } else if (key == 77)
+                    {
+                        delete_figure_from_area(game_area, current_figure);
+                        move_figure(game_area, current_figure, direction::right);
+                        draw_figure_in_area(game_area, current_figure);
+                        
+                    }
+                }
+                if (iteration % 20 == 0)
+                {
+                    draw_figure_in_area(game_area, current_figure);
+                }
+                ++iteration;
+                
+                Sleep(20);
+                ++iteration;
                 if (current_figure.y + current_figure.height == area_height)
                 {
                     break;
@@ -39,9 +63,11 @@ void start_game(area_size game_area_width, area_size game_area_height)
                 {
                     break;
                 }
-
-                delete_figure_from_area(game_area, current_figure);
-                ++current_figure.y;
+                if (iteration % 20 == 0)
+                {
+                    delete_figure_from_area(game_area, current_figure);
+                    ++current_figure.y;
+                }
             }
 
             delete_array_2d(current_figure.figure_array);

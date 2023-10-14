@@ -109,6 +109,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,7 +155,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Console\Console.cpp" />
+    <ClCompile Include="Console_App\Console_app.cpp" />
+    <ClCompile Include="console_library\console.cpp" />
+    <ClCompile Include="console_library\console_manip.cpp" />
     <ClCompile Include="Figures\Figures.cpp" />
     <ClCompile Include="GameArea\Area.cpp" />
     <ClCompile Include="Game\Game.cpp" />
@@ -163,7 +166,10 @@
   <ItemGroup>
     <ClInclude Include="Array\Array.h" />
     <ClInclude Include="Array\Array2D.h" />
-    <ClInclude Include="Console\Console.h" />
+    <ClInclude Include="Console_App\Console_app.h" />
+    <ClInclude Include="console_library\console.h" />
+    <ClInclude Include="console_library\console_manip.h" />
+    <ClInclude Include="console_library\resource.h" />
     <ClInclude Include="Figures\Figures.h" />
     <ClInclude Include="GameArea\Area.h" />
     <ClInclude Include="Game\Game.h" />

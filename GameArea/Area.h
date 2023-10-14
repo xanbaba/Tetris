@@ -5,8 +5,8 @@
 struct area
 {
     Array2D<char> area_array;
-    int width;
-    int height;
+    int x, y;
+    int width, height;
 };
 
 struct figure;
