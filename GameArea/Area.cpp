@@ -44,7 +44,7 @@ void print_area(area game_area)
 
     io.scpos(x, y);
     io << ' ';
-    for (int i = 0; i < width * 2 + 1; ++i)
+    for (int i = 0; i < width * 2 - 1; ++i)
     {
         io << '_';
     }
@@ -52,7 +52,7 @@ void print_area(area game_area)
     for (int i = 0; i < height; ++i)
     {
         io << "| ";
-        for (int j = 0; j < width; ++j)
+        for (int j = 0; j < width - 1; ++j)
         {
             io << "  ";
         }
@@ -60,7 +60,7 @@ void print_area(area game_area)
         io.scpos(x, ++y);
     }
     io << ' ';
-    for (int i = 0; i < width * 2 + 1; ++i)
+    for (int i = 0; i < width * 2 - 1; ++i)
     {
         io << '-';
     }
@@ -69,13 +69,14 @@ void print_area(area game_area)
 void delete_figure_from_area(area& game_area, figure figure_object)
 {
     auto game_area_array = game_area.area_array;
-    auto figure_object_array = figure_object.figure_array;
     for (int y = figure_object.y; y < figure_object.y + figure_object.height; ++y)
     {
         for (int x = figure_object.x; x < figure_object.x + figure_object.width; ++x)
         {
             game_area_array.data[y].data[x] = '\0';
-            io.at(x * 2 + game_area.x + 1, y + game_area.y + 1, " ");
+            io.at(static_cast<coord>(x * 2 + game_area.x + 1),
+                  static_cast<coord>(y + game_area.y + 1),
+                  " ");
         }
     }
 }
@@ -96,8 +97,68 @@ void draw_figure_in_area(area& game_area, figure figure_object)
                 data[x - figure_object.x];
             if (game_area_array.data[y].data[x] == '*')
             {
-                io.at(x * 2 + game_area.x + 1, y + game_area.y + 1, "*");
+                io.at(static_cast<coord>(x * 2 + game_area.x + 1),
+                      static_cast<coord>(y + game_area.y + 1),
+                      "*");
             }
         }
     }
+}
+
+Array<int> which_line_break(area& game_area)
+{
+    auto line_indexes = create_array<int>();
+    for (int y = 0; y < game_area.height; ++y)
+    {
+        int return_line = y;
+        for (int x = 0; x < game_area.width; ++x)
+        {
+            if (game_area.area_array.data[y].data[x] != '*')
+            {
+                return_line = -1;
+                break;
+            }
+        }
+
+        if (return_line != -1)
+        {
+            append(line_indexes, return_line);
+        }
+    }
+
+    return line_indexes;
+}
+
+void break_line(area& game_area)
+{
+    auto line_indexes = which_line_break(game_area);
+    for (int line_index_i = 0; line_index_i < line_indexes.size; ++line_index_i)
+    {
+        auto line_index = line_indexes.data[line_index_i];
+        for (int y = line_index - 1; y >= 0; --y)
+        {
+            auto& row = game_area.area_array.data[y];
+            for (int x = 0; x < row.size; ++x)
+            {
+                game_area.area_array.data[y + 1].data[x] = row.data[x];
+
+                io.erase(x * 2 + (game_area.x + 1),
+                         y + (game_area.y + 2));
+                io.scpos(x * 2 + (game_area.x + 1),
+                         y + (game_area.y + 2));
+                io << row.data[x];
+
+                row.data[x] = '\0';
+
+                io.scpos(x * 2 + (game_area.x + 1),
+                         y + (game_area.y + 1));
+                io.erase(x * 2 + (game_area.x + 1),
+                         y + (game_area.y + 1));
+
+                io << '\0';
+            }
+        }
+    }
+    io.scpos(0, 0);
+    // print_array_2d(game_area.area_array);
 }

@@ -26,8 +26,9 @@ void start_game(area_size game_area_width, area_size game_area_height)
         while (true)
         {
             auto figure_object = figures_list.data[range(engine)];
+            // auto figure_object = figures_list.data[2];
             auto current_figure = copy_figure(figure_object);
-            unsigned long long iteration{};
+            int iteration{};
             while (true)
             {
                 if (_kbhit())
@@ -38,13 +39,12 @@ void start_game(area_size game_area_width, area_size game_area_height)
                         delete_figure_from_area(game_area, current_figure);
                         move_figure(game_area, current_figure, direction::left);
                         draw_figure_in_area(game_area, current_figure);
-                        
-                    } else if (key == 77)
+                    }
+                    else if (key == 77)
                     {
                         delete_figure_from_area(game_area, current_figure);
                         move_figure(game_area, current_figure, direction::right);
                         draw_figure_in_area(game_area, current_figure);
-                        
                     }
                 }
                 if (iteration % 20 == 0)
@@ -52,7 +52,7 @@ void start_game(area_size game_area_width, area_size game_area_height)
                     draw_figure_in_area(game_area, current_figure);
                 }
                 ++iteration;
-                
+
                 Sleep(20);
                 ++iteration;
                 if (current_figure.y + current_figure.height == area_height)
@@ -71,10 +71,10 @@ void start_game(area_size game_area_width, area_size game_area_height)
             }
 
             delete_array_2d(current_figure.figure_array);
+            break_line(game_area);
         }
 
-        
-        
+
         finish_game(game_area, figures_list);
     }
     system("pause");

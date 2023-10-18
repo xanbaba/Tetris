@@ -1,4 +1,6 @@
 ﻿#include "Figures.h"
+
+#include "../console_library/console.h"
 #include "../Game/Game.h"
 
 
@@ -106,7 +108,7 @@ Array<figure> generate_figures()
         create_figure(figures_list, figures_iteration, T_figure_rows_chars, 3, 2);
     }
 
-    // S figure
+    // Z figure
     {
         char** Z_figure_rows_chars = new char*[3]
         {
@@ -190,9 +192,30 @@ bool check_figure_stop(area game_area, figure figure_object)
 void move_figure(area game_area, figure& figure_object, direction dir)
 {
     auto result_x = figure_object.x + static_cast<int>(dir);
-    if (result_x < 0 || result_x >= game_area.width)
+    if (result_x < 0 || result_x + figure_object.width >= game_area.width + 1)
     {
         return;
     }
+
+    int check_x;
+    if (dir == direction::left)
+    {
+        check_x = 0;
+    }
+    else
+    {
+        check_x = figure_object.width - 1;
+    }
+    
+    for (int i = 0; i < figure_object.height; ++i)
+    {
+        const auto figure_y_line = game_area.area_array.data[figure_object.y + i];
+        
+        if (figure_y_line.data[result_x + check_x] == '*' && figure_object.figure_array.data[i].data[check_x] == '*')
+        {
+            return;
+        }
+    }
+    
     figure_object.x = result_x;
 }
