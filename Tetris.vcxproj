@@ -166,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="Array\Array.h" />
     <ClInclude Include="Array\Array2D.h" />
+    <ClInclude Include="Array\String.h" />
     <ClInclude Include="Console_App\Console_app.h" />
     <ClInclude Include="console_library\console.h" />
     <ClInclude Include="console_library\console_manip.h" />
