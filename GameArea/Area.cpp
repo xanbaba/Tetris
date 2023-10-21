@@ -73,6 +73,11 @@ void delete_figure_from_area(area& game_area, figure figure_object)
     {
         for (int x = figure_object.x; x < figure_object.x + figure_object.width; ++x)
         {
+            if (game_area_array.data[y].data[x] == '*' &&
+                figure_object.figure_array.data[y - figure_object.y].data[x - figure_object.x] != '*')
+            {
+                continue;
+            }
             game_area_array.data[y].data[x] = '\0';
             io.at(static_cast<coord>(x * 2 + game_area.x + 1),
                   static_cast<coord>(y + game_area.y + 1),
@@ -159,6 +164,22 @@ void break_line(area& game_area)
             }
         }
     }
-    io.scpos(0, 0);
-    // print_array_2d(game_area.area_array);
+}
+
+bool can_spawn_figure(area& game_area, figure& figure_object)
+{
+    auto game_area_array = game_area.area_array;
+    auto figure_object_array = figure_object.figure_array;
+    for (int y = figure_object.y; y < figure_object.y + figure_object.height; ++y)
+    {
+        for (int x = figure_object.x; x < figure_object.x + figure_object.width; ++x)
+        {
+            if (figure_object_array.data[y - figure_object.y].data[x - figure_object.x] == '*' &&
+                game_area_array.data[y].data[x] == '*')
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }

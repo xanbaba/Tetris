@@ -17,3 +17,4 @@ void draw_figure_in_area(area& game_area, figure figure_object);
 void print_area(area game_area);
 Array<int> which_line_break(area& game_area);
 void break_line(area& game_area);
+bool can_spawn_figure(area& game_area, figure& figure_object);
