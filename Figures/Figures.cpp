@@ -22,8 +22,6 @@ void create_figure(Array<figure>& figures_list, int& figures_list_index, char**&
     add_figure.width = cols;
     add_figure.height = rows;
     add_figure.x = static_cast<int>(area_size::width) / 2 - cols / 2;
-    add_figure.center_x = cols / 2;
-    add_figure.center_y = rows / 2;
 
     append(figures_list, add_figure);
     ++figures_list_index;
@@ -135,8 +133,6 @@ void destroy_figures(Array<figure>& figures_list)
 figure copy_figure(figure figure_object)
 {
     figure copied_figure;
-    copied_figure.center_x = figure_object.center_x;
-    copied_figure.center_y = figure_object.center_y;
     copied_figure.x = figure_object.x;
     copied_figure.y = figure_object.y;
     copied_figure.width = figure_object.width;
@@ -161,16 +157,16 @@ bool check_figure_stop(area game_area, figure figure_object)
 {
     auto game_area_array = game_area.area_array;
     auto figure_object_array = figure_object.figure_array;
-    
+
     for (int y = figure_object.y; y < figure_object.y + figure_object.height; ++y)
     {
         auto figure_y = y - figure_object.y;
         for (int x = figure_object.x; x < figure_object.x + figure_object.width; ++x)
         {
             auto figure_x = x - figure_object.x;
-            
+
             if (figure_object_array.data[figure_y].data[figure_x] == '*' &&
-                    game_area_array.data[y + 1].data[x] == '*')
+                game_area_array.data[y + 1].data[x] == '*')
             {
                 if (figure_y + 1 < figure_object.height)
                 {
@@ -206,16 +202,81 @@ void move_figure(area game_area, figure& figure_object, direction dir)
     {
         check_x = figure_object.width - 1;
     }
-    
+
     for (int i = 0; i < figure_object.height; ++i)
     {
         const auto figure_y_line = game_area.area_array.data[figure_object.y + i];
-        
+
         if (figure_y_line.data[result_x + check_x] == '*' && figure_object.figure_array.data[i].data[check_x] == '*')
         {
             return;
         }
     }
-    
+
     figure_object.x = result_x;
+}
+
+void rotate_figure(area& game_area, figure& figure_object)
+{
+    const int old_width = figure_object.width,
+              old_height = figure_object.height;
+
+    figure_object.height = old_width;
+    figure_object.width = old_height;
+
+    auto new_figure_array = create_array_2d<char>();
+
+    for (int i = 0; i < figure_object.height; ++i)
+    {
+        auto row = create_array<char>(figure_object.width);
+        append_row(new_figure_array, row);
+    }
+
+    for (int y = 0; y < old_height; ++y)
+    {
+        for (int x = 0; x < old_width; ++x)
+        {
+            if (figure_object.figure_array.data[y].data[x] != '*')
+            {
+                continue;
+            }
+
+            int new_x = figure_object.width - 1 - y,
+                new_y = x;
+
+            new_figure_array.data[new_y].data[new_x] = '*';
+        }
+    }
+
+    const int old_x = figure_object.x;
+
+    for (int y = 0; y < figure_object.height; ++y)
+    {
+        for (int x = 0; x < figure_object.width; ++x)
+        {
+            bool broke = true;
+            for (int i = 0; i < figure_object.width; ++i)
+            {
+                if (game_area.area_array.data[figure_object.y + y].data[figure_object.x + x] == '*')
+                {
+                    move_figure(game_area, figure_object, direction::left);
+                    continue;
+                }
+                broke = false;
+                break;
+            }
+
+            if (broke)
+            {
+                figure_object.height = old_height;
+                figure_object.width = old_width;
+                figure_object.x = old_x;
+                delete_array_2d(new_figure_array);
+                return;
+            }
+        }
+    }
+
+    delete_array_2d(figure_object.figure_array);
+    figure_object.figure_array = new_figure_array;
 }

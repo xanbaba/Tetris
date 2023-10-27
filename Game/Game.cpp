@@ -55,10 +55,20 @@ void start_game(area_size game_area_width, area_size game_area_height)
                 }
                 else if (key == 80)
                 {
+                    if (current_figure.y + 1 < game_area.height)
+                    {
+                        delete_figure_from_area(game_area, current_figure);
+                        ++current_figure.y;
+                        draw_figure_in_area(game_area, current_figure);
+                    }
+                }
+                else if (key == 72)
+                {
                     delete_figure_from_area(game_area, current_figure);
-                    ++current_figure.y;
+                    rotate_figure(game_area, current_figure);
                     draw_figure_in_area(game_area, current_figure);
                 }
+                
             }
             if (iteration % frame_update == 0)
             {
