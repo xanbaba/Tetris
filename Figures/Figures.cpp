@@ -254,20 +254,34 @@ void rotate_figure(area& game_area, figure& figure_object)
     {
         for (int x = 0; x < figure_object.width; ++x)
         {
+            if (new_figure_array.data[y].data[x] != '*')
+            {
+                continue;
+            }
             bool broke = true;
             for (int i = 0; i < figure_object.width; ++i)
             {
-                if (game_area.area_array.data[figure_object.y + y].data[figure_object.x + x] == '*')
+                if ((game_area.area_array.data[figure_object.y + y].data[figure_object.x + x] == '*' ||
+                    figure_object.x + x >= game_area.width) && figure_object.x - 1 >= 0)
                 {
-                    move_figure(game_area, figure_object, direction::left);
+                    --figure_object.x;
                     continue;
                 }
                 broke = false;
                 break;
             }
 
+            if (new_figure_array.data[y].data[x] == '*' &&
+                game_area.area_array.data[figure_object.y + y].data[figure_object.x + x] == '*')
+            {
+                broke = true;
+            }
+
             if (broke)
             {
+                app::console::io.erase(0,0, 10);
+                app::console::io.scpos(0, 0);
+                app::console::io << "broke";
                 figure_object.height = old_height;
                 figure_object.width = old_width;
                 figure_object.x = old_x;
