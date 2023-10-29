@@ -55,7 +55,7 @@ void start_game(area_size game_area_width, area_size game_area_height)
                 }
                 else if (key == 80)
                 {
-                    if (current_figure.y + 1 < game_area.height)
+                    if (current_figure.y + current_figure.height < game_area.height)
                     {
                         delete_figure_from_area(game_area, current_figure);
                         ++current_figure.y;
