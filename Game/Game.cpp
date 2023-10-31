@@ -20,7 +20,7 @@ void start_game(area_size game_area_width, area_size game_area_height)
     std::default_random_engine engine(time(nullptr));
     std::uniform_int_distribution<> range(0, figures_list.size - 1);
 
-    int frame_update = 50;
+    int frame_update = 45;
 
     print_introduction();
 
@@ -28,7 +28,8 @@ void start_game(area_size game_area_width, area_size game_area_height)
     // main loop
     while (true)
     {
-        auto figure_object = figures_list.data[range(engine)];
+        // auto figure_object = figures_list.data[range(engine)];
+        auto figure_object = figures_list.data[2];
         if (!can_spawn_figure(game_area, figure_object))
         {
             break;
@@ -55,12 +56,16 @@ void start_game(area_size game_area_width, area_size game_area_height)
                 }
                 else if (key == 80)
                 {
+                    delete_figure_from_area(game_area, current_figure);
                     if (current_figure.y + current_figure.height < game_area.height)
                     {
-                        delete_figure_from_area(game_area, current_figure);
                         ++current_figure.y;
-                        draw_figure_in_area(game_area, current_figure);
+                        if (!can_spawn_figure(game_area, current_figure))
+                        {
+                            --current_figure.y;
+                        }
                     }
+                    draw_figure_in_area(game_area, current_figure);
                 }
                 else if (key == 72)
                 {
@@ -68,7 +73,6 @@ void start_game(area_size game_area_width, area_size game_area_height)
                     rotate_figure(game_area, current_figure);
                     draw_figure_in_area(game_area, current_figure);
                 }
-                
             }
             if (iteration % frame_update == 0)
             {

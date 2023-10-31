@@ -165,25 +165,6 @@ void clear_array(Array<T>& array)
 }
 
 template <typename T>
-void resize(Array<T>& array, int new_capacity)
-{
-    // Check for idiots
-    if (new_capacity < 0)
-    {
-        return;
-    }
-
-    // Another check for idiots
-    if (new_capacity < array.size)
-    {
-        array.size = new_capacity;
-    }
-
-    // Resize
-    array.capacity = new_capacity;
-}
-
-template <typename T>
 Array<T> slice(Array<T>& array, int begin_index, int end_index)
 {
     auto sliced_array = create_array<T>(end_index - begin_index + 1);
@@ -194,14 +175,6 @@ Array<T> slice(Array<T>& array, int begin_index, int end_index)
     }
 
     return sliced_array;
-}
-
-template <typename T>
-void swap_values(T& a, T& b)
-{
-    T temp = a;
-    a = b;
-    b = temp;
 }
 
 template <typename T>

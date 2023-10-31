@@ -1,5 +1,7 @@
 ﻿#include "Figures.h"
 
+#include <queue>
+
 #include "../console_library/console.h"
 #include "../Game/Game.h"
 
@@ -216,7 +218,7 @@ void move_figure(area game_area, figure& figure_object, direction dir)
     figure_object.x = result_x;
 }
 
-void rotate_figure(area& game_area, figure& figure_object)
+Array2D<char> get_rotated_figure_array(figure& figure_object)
 {
     const int old_width = figure_object.width,
               old_height = figure_object.height;
@@ -248,49 +250,155 @@ void rotate_figure(area& game_area, figure& figure_object)
         }
     }
 
-    const int old_x = figure_object.x;
+    return new_figure_array;
+}
 
-    for (int y = 0; y < figure_object.height; ++y)
+char get_area_symbol(figure& figure_object, area& game_area, int x, int y)
+{
+    char area_symbol;
+
+    if (figure_object.x + x >= game_area.width ||
+        figure_object.y + y >= game_area.height)
     {
-        for (int x = 0; x < figure_object.width; ++x)
+        area_symbol = '*';
+    }
+    else
+    {
+        area_symbol = game_area.area_array.data[figure_object.y + y].data[figure_object.x + x];
+    }
+
+    return area_symbol;
+}
+
+bool find_coord(Array2D<int> overflowed_coords, Array<int> overflow_coord)
+{
+    const int x = overflow_coord.data[0],
+              y = overflow_coord.data[1];
+
+    for (int i = 0; i < overflowed_coords.rows; ++i)
+    {
+        if (x == overflowed_coords.data[i].data[0] &&
+            y == overflowed_coords.data[i].data[1])
         {
-            if (new_figure_array.data[y].data[x] != '*')
-            {
-                continue;
-            }
-            bool broke = true;
-            for (int i = 0; i < figure_object.width; ++i)
-            {
-                if ((game_area.area_array.data[figure_object.y + y].data[figure_object.x + x] == '*' ||
-                    figure_object.x + x >= game_area.width) && figure_object.x - 1 >= 0)
-                {
-                    --figure_object.x;
-                    continue;
-                }
-                broke = false;
-                break;
-            }
+            return true;
+        }
+    }
+    return false;
+}
 
-            if (new_figure_array.data[y].data[x] == '*' &&
-                game_area.area_array.data[figure_object.y + y].data[figure_object.x + x] == '*')
-            {
-                broke = true;
-            }
-
-            if (broke)
-            {
-                app::console::io.erase(0,0, 10);
-                app::console::io.scpos(0, 0);
-                app::console::io << "broke";
-                figure_object.height = old_height;
-                figure_object.width = old_width;
-                figure_object.x = old_x;
-                delete_array_2d(new_figure_array);
-                return;
-            }
+int find_overflow_max_x(Array2D<int> overflowed_coords)
+{
+    int max_x = overflowed_coords.data[0].data[0];
+    for (int i = 0; i < overflowed_coords.rows; ++i)
+    {
+        if (overflowed_coords.data[i].data[0] > max_x)
+        {
+            max_x = overflowed_coords.data[i].data[0];
         }
     }
 
-    delete_array_2d(figure_object.figure_array);
-    figure_object.figure_array = new_figure_array;
+    return max_x;
+}
+
+void add_coords(Array2D<int>& coords_list, Array<int>& coords)
+{
+    reallocate_array_2d(coords_list);
+    coords_list.data[coords_list.rows] = create_array<int>(coords.size);
+
+    coords_list.data[coords_list.rows].data[0] = coords.data[0];
+    coords_list.data[coords_list.rows].data[1] = coords.data[1];
+    coords_list.data[coords_list.rows].size = 2;
+    ++coords_list.rows;
+}
+
+bool set_rotated_figure_x(area& game_area, figure& figure_object, Array2D<char> new_figure_array)
+{
+    int old_x = figure_object.x;
+    auto overflowed_coords = create_array_2d<int>(figure_object.width * figure_object.height);
+    for (int i = 0; i < figure_object.width - 1; ++i)
+    {
+        auto found_coords = create_array_2d<int>(figure_object.width * figure_object.height);
+        for (int y = 0; y < figure_object.height; ++y)
+        {
+            for (int x = 0; x < figure_object.width; ++x)
+            {
+                auto figure_symbol = new_figure_array.data[y].data[x];
+                auto area_symbol = get_area_symbol(figure_object, game_area, x, y);
+
+                if (figure_symbol == '*' && area_symbol == '*')
+                {
+                    auto overflow_coord = create_array<int>();
+                    append(overflow_coord, x);
+                    append(overflow_coord, y);
+
+                    if (i == 0)
+                    {
+                        add_coords(overflowed_coords, overflow_coord);
+                        add_coords(found_coords, overflow_coord);
+                        continue;
+                    }
+                    if (find_coord(overflowed_coords, overflow_coord))
+                    {
+                        add_coords(found_coords, overflow_coord);
+                        continue;
+                    }
+
+                    int max_x = find_overflow_max_x(overflowed_coords);
+                    if (x > max_x)
+                    {
+                        add_coords(overflowed_coords, overflow_coord);
+                        add_coords(found_coords, overflow_coord);
+                        continue;
+                    }
+                    delete_array_2d(overflowed_coords);
+                    delete_array_2d(found_coords);
+                    delete_array_2d(new_figure_array);
+                    figure_object.x = old_x;
+                    std::swap(figure_object.width, figure_object.height);
+                    return false;
+                }
+            }
+        }
+
+        for (int j = 0; j < overflowed_coords.rows; ++j)
+        {
+            if (find_coord(found_coords, overflowed_coords.data[j]))
+            {
+                continue;
+            }
+            pop_row(overflowed_coords, j--);
+        }
+
+        if (overflowed_coords.rows == 0)
+        {
+            break;
+        }
+
+        if (figure_object.x - 1 > 0)
+        {
+            --figure_object.x;
+        }
+        else
+        {
+            delete_array_2d(overflowed_coords);
+            delete_array_2d(found_coords);
+            delete_array_2d(new_figure_array);
+            figure_object.x = old_x;
+            std::swap(figure_object.width, figure_object.height);
+            return false;
+        }
+    }
+
+    delete_array_2d(overflowed_coords);
+    return true;
+}
+
+void rotate_figure(area& game_area, figure& figure_object)
+{
+    auto new_figure_array = get_rotated_figure_array(figure_object);
+    if (set_rotated_figure_x(game_area, figure_object, new_figure_array))
+    {
+        delete_array_2d(figure_object.figure_array);
+        figure_object.figure_array = new_figure_array;
+    }
 }

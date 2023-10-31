@@ -177,6 +177,7 @@ bool can_spawn_figure(area& game_area, figure& figure_object)
             if (figure_object_array.data[y - figure_object.y].data[x - figure_object.x] == '*' &&
                 game_area_array.data[y].data[x] == '*')
             {
+                io.at(0, 1, "false");
                 return false;
             }
         }
