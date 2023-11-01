@@ -300,6 +300,20 @@ int find_overflow_max_x(Array2D<int> overflowed_coords)
     return max_x;
 }
 
+int find_overflow_max_y(Array2D<int> overflowed_coords)
+{
+    int max_y = overflowed_coords.data[0].data[1];
+    for (int i = 0; i < overflowed_coords.rows; ++i)
+    {
+        if (overflowed_coords.data[i].data[1] > max_y)
+        {
+            max_y = overflowed_coords.data[i].data[1];
+        }
+    }
+
+    return max_y;
+}
+
 void add_coords(Array2D<int>& coords_list, Array<int>& coords)
 {
     reallocate_array_2d(coords_list);
@@ -407,10 +421,98 @@ bool set_rotated_figure_x(area& game_area, figure& figure_object, Array2D<char> 
     return true;
 }
 
+bool set_rotated_figure_y(area& game_area, figure& figure_object, Array2D<char> new_figure_array)
+{
+    int old_y = figure_object.y;
+    auto overflowed_coords = create_array_2d<int>(figure_object.width * figure_object.height);
+    for (int i = 0; i < figure_object.height - 1; ++i)
+    {
+        auto found_coords = create_array_2d<int>(figure_object.width * figure_object.height);
+        for (int y = 0; y < figure_object.height; ++y)
+        {
+            for (int x = 0; x < figure_object.width; ++x)
+            {
+                auto figure_symbol = new_figure_array.data[y].data[x];
+                auto area_symbol = get_area_symbol(figure_object, game_area, x, y);
+
+                if (figure_symbol == '*' && area_symbol == '*')
+                {
+                    auto overflow_coord = create_array<int>();
+                    append(overflow_coord, x);
+                    append(overflow_coord, y);
+
+                    if (i == 0)
+                    {
+                        add_coords(overflowed_coords, overflow_coord);
+                        add_coords(found_coords, overflow_coord);
+                        delete_array(overflow_coord);
+                        continue;
+                    }
+                    if (find_coord(overflowed_coords, overflow_coord))
+                    {
+                        add_coords(found_coords, overflow_coord);
+                        delete_array(overflow_coord);
+                        continue;
+                    }
+
+                    int max_y = find_overflow_max_y(overflowed_coords);
+                    if (y > max_y)
+                    {
+                        add_coords(overflowed_coords, overflow_coord);
+                        add_coords(found_coords, overflow_coord);
+                        delete_array(overflow_coord);
+                        continue;
+                    }
+                    delete_array_2d(overflowed_coords);
+                    delete_array_2d(found_coords);
+                    delete_array_2d(new_figure_array);
+                    figure_object.x = old_y;
+                    std::swap(figure_object.width, figure_object.height);
+                    return false;
+                }
+            }
+        }
+
+        for (int j = 0; j < overflowed_coords.rows; ++j)
+        {
+            if (find_coord(found_coords, overflowed_coords.data[j]))
+            {
+                continue;
+            }
+            delete_coord(overflowed_coords, j--);
+        }
+
+        if (overflowed_coords.rows == 0)
+        {
+            break;
+        }
+
+        if (figure_object.y - 1 > 0)
+        {
+            --figure_object.y;
+            
+        }
+        else
+        {
+            delete_array_2d(overflowed_coords);
+            delete_array_2d(found_coords);
+            delete_array_2d(new_figure_array);
+            figure_object.x = old_y;
+            std::swap(figure_object.width, figure_object.height);
+            return false;
+        }
+        delete_array_2d(found_coords);
+    }
+
+    delete_array_2d(overflowed_coords);
+    return true;
+}
+
 void rotate_figure(area& game_area, figure& figure_object)
 {
     auto new_figure_array = get_rotated_figure_array(figure_object);
-    if (set_rotated_figure_x(game_area, figure_object, new_figure_array))
+    if (set_rotated_figure_x(game_area, figure_object, new_figure_array) &&
+        set_rotated_figure_y(game_area, figure_object, new_figure_array))
     {
         delete_array_2d(figure_object.figure_array);
         figure_object.figure_array = new_figure_array;
