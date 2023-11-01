@@ -28,8 +28,8 @@ void start_game(area_size game_area_width, area_size game_area_height)
     // main loop
     while (true)
     {
-        // auto figure_object = figures_list.data[range(engine)];
-        auto figure_object = figures_list.data[2];
+        auto figure_object = figures_list.data[range(engine)];
+        // auto figure_object = figures_list.data[2];
         if (!can_spawn_figure(game_area, figure_object))
         {
             break;

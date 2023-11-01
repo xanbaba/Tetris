@@ -18,6 +18,11 @@ Array2D<T> create_array_2d(int capacity = 16)
     array.capacity = capacity;
     array.data = new Array<T>[capacity]{};
 
+    for (int i = 0; i < capacity; ++i)
+    {
+        array.data[i] = create_array<T>(capacity);
+    }
+
     return array;
 }
 

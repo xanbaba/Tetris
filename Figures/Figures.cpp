@@ -311,6 +311,15 @@ void add_coords(Array2D<int>& coords_list, Array<int>& coords)
     ++coords_list.rows;
 }
 
+void delete_coord(Array2D<int>& coord_list, int index)
+{
+    delete_array(coord_list.data[index]);
+    coord_list.data[index] = create_array<int>(2);
+    move_array_2d_left(coord_list, index);
+    --coord_list.rows;
+    coord_list.data[coord_list.rows] = create_array<int>(2);
+}
+
 bool set_rotated_figure_x(area& game_area, figure& figure_object, Array2D<char> new_figure_array)
 {
     int old_x = figure_object.x;
@@ -335,11 +344,13 @@ bool set_rotated_figure_x(area& game_area, figure& figure_object, Array2D<char> 
                     {
                         add_coords(overflowed_coords, overflow_coord);
                         add_coords(found_coords, overflow_coord);
+                        delete_array(overflow_coord);
                         continue;
                     }
                     if (find_coord(overflowed_coords, overflow_coord))
                     {
                         add_coords(found_coords, overflow_coord);
+                        delete_array(overflow_coord);
                         continue;
                     }
 
@@ -348,6 +359,7 @@ bool set_rotated_figure_x(area& game_area, figure& figure_object, Array2D<char> 
                     {
                         add_coords(overflowed_coords, overflow_coord);
                         add_coords(found_coords, overflow_coord);
+                        delete_array(overflow_coord);
                         continue;
                     }
                     delete_array_2d(overflowed_coords);
@@ -366,7 +378,7 @@ bool set_rotated_figure_x(area& game_area, figure& figure_object, Array2D<char> 
             {
                 continue;
             }
-            pop_row(overflowed_coords, j--);
+            delete_coord(overflowed_coords, j--);
         }
 
         if (overflowed_coords.rows == 0)
@@ -377,6 +389,7 @@ bool set_rotated_figure_x(area& game_area, figure& figure_object, Array2D<char> 
         if (figure_object.x - 1 > 0)
         {
             --figure_object.x;
+            
         }
         else
         {
@@ -387,6 +400,7 @@ bool set_rotated_figure_x(area& game_area, figure& figure_object, Array2D<char> 
             std::swap(figure_object.width, figure_object.height);
             return false;
         }
+        delete_array_2d(found_coords);
     }
 
     delete_array_2d(overflowed_coords);
