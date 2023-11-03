@@ -25,3 +25,4 @@ figure copy_figure(figure figure_object);
 bool check_figure_stop(area game_area, figure figure_object);
 void move_figure(area game_area, figure& figure_object, direction dir);
 void rotate_figure(area& game_area, figure& figure_object);
+void print_next_figure(figure figure_object, area game_area);

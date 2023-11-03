@@ -25,11 +25,17 @@ void start_game(area_size game_area_width, area_size game_area_height)
     print_introduction();
 
     print_area(game_area);
+
+    auto next_figure = figures_list.data[range(engine)];
+    int score = 0;
     // main loop
     while (true)
     {
-        auto figure_object = figures_list.data[range(engine)];
-        // auto figure_object = figures_list.data[2];
+        auto figure_object = next_figure;
+        next_figure = figures_list.data[range(engine)];
+
+        print_next_figure(next_figure, game_area);
+        print_score_box(game_area, score);
         if (!can_spawn_figure(game_area, figure_object))
         {
             break;
@@ -98,9 +104,10 @@ void start_game(area_size game_area_width, area_size game_area_height)
                 ++current_figure.y;
             }
         }
-
+        
         delete_array_2d(current_figure.figure_array);
-        break_line(game_area);
+        break_line(game_area, score);
+        ++score;
     }
     finish_game(game_area, figures_list);
     io.readk(key::ENTER);

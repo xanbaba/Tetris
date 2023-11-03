@@ -5,6 +5,7 @@
 #include "../console_library/console.h"
 #include "../Game/Game.h"
 
+using namespace app::console;
 
 void create_figure(Array<figure>& figures_list, int& figures_list_index, char**& figure_rows_chars, int rows, int cols)
 {
@@ -403,7 +404,6 @@ bool set_rotated_figure_x(area& game_area, figure& figure_object, Array2D<char> 
         if (figure_object.x - 1 > 0)
         {
             --figure_object.x;
-            
         }
         else
         {
@@ -490,7 +490,6 @@ bool set_rotated_figure_y(area& game_area, figure& figure_object, Array2D<char> 
         if (figure_object.y - 1 > 0)
         {
             --figure_object.y;
-            
         }
         else
         {
@@ -516,5 +515,21 @@ void rotate_figure(area& game_area, figure& figure_object)
     {
         delete_array_2d(figure_object.figure_array);
         figure_object.figure_array = new_figure_array;
+    }
+}
+
+void print_next_figure(figure figure_object, area game_area)
+{
+    print_next_box(game_area);
+    for (int i = 0; i < figure_object.height; ++i)
+    {
+        for (int j = 0; j < figure_object.width; ++j)
+        {
+            if (figure_object.figure_array.data[i].data[j] == '*')
+            {
+                io.at(game_area.x + game_area.width * 2 + 2 + figure_object.width + j * 2 + 4 - figure_object.width / 2
+                      * 2, game_area.y + i + 1, "* ");
+            }
+        }
     }
 }

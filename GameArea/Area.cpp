@@ -34,6 +34,73 @@ area create_area(int width, int height)
     return game_area;
 }
 
+void print_next_box(area game_area)
+{
+    io.scpos(game_area.x + game_area.width * 2 + 1, game_area.y);
+    io << ' ';
+    for (int i = 0; i < 5; ++i)
+    {
+        io << "__";
+    }
+
+    for (int i = 1; i < 6; ++i)
+    {
+        io.scpos(game_area.x + game_area.width * 2 + 1, game_area.y + i);
+        io << "| ";
+        for (int j = 0; j < 4; ++j)
+        {
+            if (j == 3)
+            {
+                io << ' ';
+            }
+            io << "  ";
+        }
+        io << "| ";
+    }
+
+    io.scpos(game_area.x + game_area.width * 2 + 1, game_area.y + 6);
+    io << ' ';
+    for (int i = 0; i < 5; ++i)
+    {
+        io << "--";
+    }
+}
+
+void print_score_box(area game_area, const int score)
+{
+    io.scpos(game_area.x + game_area.width * 2 + 1, game_area.y + 7);
+    io << ' ';
+    for (int i = 0; i < 4; ++i)
+    {
+        io << "__";
+    }
+
+    for (int i = 1; i < 4; ++i)
+    {
+        io.scpos(game_area.x + game_area.width * 2 + 1, game_area.y + i + 7);
+        io << "| ";
+        for (int j = 0; j < 3; ++j)
+        {
+            if (j == 2)
+            {
+                io << ' ';
+            }
+            io << "  ";
+        }
+        io << "| ";
+    }
+
+    io.scpos(game_area.x + game_area.width * 2 + 1, game_area.y + 11);
+    io << ' ';
+    for (int i = 0; i < 4; ++i)
+    {
+        io << "--";
+    }
+
+    io.scpos(game_area.x + game_area.width * 2 + 3, game_area.y + 9);
+    io << score;
+}
+
 void print_area(area game_area)
 {
     int width = game_area.width;
@@ -64,6 +131,9 @@ void print_area(area game_area)
     {
         io << '-';
     }
+    
+    print_next_box(game_area);
+    
 }
 
 void delete_figure_from_area(area& game_area, figure figure_object)
@@ -134,9 +204,13 @@ Array<int> which_line_break(area& game_area)
     return line_indexes;
 }
 
-void break_line(area& game_area)
+void break_line(area& game_area, int& score)
 {
     auto line_indexes = which_line_break(game_area);
+    if (line_indexes.size > 0)
+    {
+        score += line_indexes.size * 10;
+    }
     for (int line_index_i = 0; line_index_i < line_indexes.size; ++line_index_i)
     {
         auto line_index = line_indexes.data[line_index_i];
