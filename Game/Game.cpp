@@ -108,6 +108,28 @@ void start_game(area_size game_area_width, area_size game_area_height)
         delete_array_2d(current_figure.figure_array);
         break_line(game_area, score);
         ++score;
+
+        if (score > 1000)
+        {
+            score = 15;
+        }
+        else if (score > 500 )
+        {
+            score = 20;
+        }
+        else if (score > 250)
+        {
+            score = 25;
+        }
+        else if (score > 100)
+        {
+            score = 30;
+        }
+        else if (score > 50)
+        {
+            score = 35;
+        }
+        
     }
     finish_game(game_area, figures_list);
     io.readk(key::ENTER);
