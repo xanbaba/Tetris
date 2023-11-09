@@ -196,27 +196,12 @@ void move_figure(area game_area, figure& figure_object, direction dir)
         return;
     }
 
-    int check_x;
-    if (dir == direction::left)
-    {
-        check_x = 0;
-    }
-    else
-    {
-        check_x = figure_object.width - 1;
-    }
-
-    for (int i = 0; i < figure_object.height; ++i)
-    {
-        const auto figure_y_line = game_area.area_array.data[figure_object.y + i];
-
-        if (figure_y_line.data[result_x + check_x] == '*' && figure_object.figure_array.data[i].data[check_x] == '*')
-        {
-            return;
-        }
-    }
-
+    int old_x = figure_object.x;
     figure_object.x = result_x;
+    if (!can_spawn_figure(game_area, figure_object))
+    {
+        figure_object.x = old_x;
+    }
 }
 
 Array2D<char> get_rotated_figure_array(figure& figure_object)
