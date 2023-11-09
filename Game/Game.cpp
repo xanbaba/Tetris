@@ -109,25 +109,25 @@ void start_game(area_size game_area_width, area_size game_area_height)
         break_line(game_area, score);
         ++score;
 
-        if (score > 1000)
+        if (score > 400)
         {
-            score = 15;
+            frame_update = 10;
         }
-        else if (score > 500 )
+        else if (score > 300 )
         {
-            score = 20;
+            frame_update = 15;
         }
-        else if (score > 250)
+        else if (score > 200)
         {
-            score = 25;
+            frame_update = 20;
         }
         else if (score > 100)
         {
-            score = 30;
+            frame_update = 25;
         }
         else if (score > 50)
         {
-            score = 35;
+            frame_update = 30;
         }
         
     }
