@@ -18,6 +18,10 @@ void create_figure(Array<figure>& figures_list, int& figures_list_index, char**&
         append_row(figure_array, row);
     }
 
+    for (int i = 0; i < rows; ++i)
+    {
+        delete[] figure_rows_chars[i];
+    }
     delete[] figure_rows_chars;
 
     figure add_figure{};
